@@ -1,4 +1,4 @@
-module github.com/cargod-bj/b2c-ms-kits
+module github.com/cargod-bj/b2c-micro-service-kits
 
 go 1.14
 
