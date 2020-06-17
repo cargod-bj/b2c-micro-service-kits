@@ -20,7 +20,7 @@ var (
 	confFileLevel    string
 	confLogDir       string
 	confIsLog2File   bool
-	logger           *oplogging.Logger
+	Logger           *oplogging.Logger
 	hasInit          bool = false
 )
 
@@ -57,7 +57,7 @@ func InitLog(module, prefix, stdOutLevel, fileLevel, logDir string, isLog2Stdout
 		panic("the prefix must be not empty")
 	}
 
-	logger = oplogging.MustGetLogger(confModule)
+	Logger = oplogging.MustGetLogger(confModule)
 	var backends []oplogging.Backend
 	backends = registerStdout(backends)
 	backends = registerFile(backends)
