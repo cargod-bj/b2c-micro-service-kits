@@ -15,13 +15,11 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-.idea/*
+/.idea/*
 /gen_log/*
 /log/*
 /go_build_b2c_staff
 /gen_latest_log
 /latest_log
-/go.sum
 /b2c-staff
 /docs
-/go.sum
