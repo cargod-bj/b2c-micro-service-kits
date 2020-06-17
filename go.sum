@@ -25,6 +25,8 @@ github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kB
 github.com/bketelsen/crypt v0.0.3-0.20200106085610-5cbc8cc4026c/go.mod h1:MKsuJmJgSg28kpZDP6UIiPt0e0Oz0kqKNGyRaWEPv84=
 github.com/cargod-bj/b2c-common v0.0.0-20200608123953-7609426088ee h1:k/F0OU5Z0mO3LwZ9bllcnDHRdX7NdF2gdCdqxs4r654=
 github.com/cargod-bj/b2c-common v0.0.0-20200608123953-7609426088ee/go.mod h1:Dh4soWJTKRGZQ6Ef4rkgGx5yyYRJx9VQiiMUomnuAMc=
+github.com/cargod-bj/b2c-proto-common v0.0.0-20200609104937-2df413486d31 h1:raqBgWP63AHTwEspByeAJzAMsQzdGkb7Tafuu1jChlg=
+github.com/cargod-bj/b2c-proto-common v0.0.0-20200609104937-2df413486d31/go.mod h1:wLXu07kOQRLzaLtORctZRm/Ml4th75YYXs5LCXCvPZk=
 github.com/cargod-bj/b2c-proto-common v0.0.8 h1:CifM+MITAoN3w18Y/MgNWBl3uCSbK5p1BYCrYy9uE30=
 github.com/cargod-bj/b2c-proto-common v0.0.8/go.mod h1:wLXu07kOQRLzaLtORctZRm/Ml4th75YYXs5LCXCvPZk=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
