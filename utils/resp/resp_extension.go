@@ -1,10 +1,10 @@
-package utils
+package respUtil
 
 import (
 	"fmt"
 	"github.com/cargod-bj/b2c-common/utils"
 	commonUtils "github.com/cargod-bj/b2c-common/utils"
-	"github.com/cargod-bj/b2c-ms-kits/log"
+	"github.com/cargod-bj/b2c-micro-service-kits/log"
 	"github.com/cargod-bj/b2c-proto-common/common"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"

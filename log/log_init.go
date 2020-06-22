@@ -58,12 +58,20 @@ func InitLog(module, prefix, stdOutLevel, fileLevel, logDir string, isLog2Stdout
 	}
 
 	Logger = oplogging.MustGetLogger(confModule)
+	Logger.ExtraCalldepth = 1
 	var backends []oplogging.Backend
 	backends = registerStdout(backends)
 	backends = registerFile(backends)
 
-	oplogging.SetBackend(backends...)
+	backendLeveled := oplogging.AddModuleLevel(oplogging.MultiLogger(backends...))
+	Logger.SetBackend(backendLeveled)
+
 	hasInit = true
+}
+
+func SetLog(logger *oplogging.Logger) {
+	hasInit = true
+	Logger = logger
 }
 
 func registerStdout(backends []oplogging.Backend) []oplogging.Backend {
@@ -83,12 +91,22 @@ func registerFile(backends []oplogging.Backend) []oplogging.Backend {
 	if confLogDir == "" {
 		return backends
 	}
-	if ok, _ := utils.PathExists(confLogDir); !ok {
+	fmt.Println("log directory:" + confLogDir)
+	tempDir := confLogDir
+	if ok, _ := utils.PathExists(tempDir); !ok {
 		// directory not exist
-		fmt.Println("create log directory")
-		_ = os.Mkdir(confLogDir, os.ModePerm)
+		currentDir, _ := os.Getwd()
+		tempDir = currentDir + tempDir
+		if strings.HasPrefix(tempDir, string(os.PathSeparator)) && strings.HasSuffix(currentDir, string(os.PathSeparator)) {
+			tempDir = currentDir + tempDir[1:]
+		}
+		fmt.Println("create log directory:" + tempDir)
+		err := os.MkdirAll(tempDir, os.ModePerm)
+		if err != nil {
+			fmt.Println("create log directory failed")
+		}
 	}
-	logFileDir := confLogDir + string(os.PathSeparator)
+	logFileDir := tempDir + string(os.PathSeparator)
 	fileWriter, err := rotatelogs.New(
 		logFileDir+"%Y-%m-%d-%H-%M.log",
 		// generate soft link, point to latest log file
@@ -111,6 +129,7 @@ func registerFile(backends []oplogging.Backend) []oplogging.Backend {
 
 func createBackend(w io.Writer, level oplogging.Level) oplogging.Backend {
 	backend := oplogging.NewLogBackend(w, confPrefix, 0)
+	//backend := oplogging.NewLogBackend(w, confPrefix, log.LstdFlags | log.Lmicroseconds | log.Llongfile)
 	stdoutWriter := false
 	if w == os.Stdout {
 		stdoutWriter = true
@@ -118,7 +137,7 @@ func createBackend(w io.Writer, level oplogging.Level) oplogging.Backend {
 	format := getLogFormatter(stdoutWriter)
 	backendLeveled := oplogging.AddModuleLevel(oplogging.NewBackendFormatter(backend, format))
 	backendLeveled.SetLevel(level, confModule)
-	return backend
+	return backendLeveled
 }
 
 func getLogFormatter(stdoutWriter bool) oplogging.Formatter {
