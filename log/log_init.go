@@ -33,7 +33,9 @@ var (
 // 	4. stdOutLevel 输出到 命令行 的级别，支持："DEBUG"，"INFO"，"NOTICE"，"WARNING"，"ERROR"，"CRITICAL"，如果为空则默认为 DEBUG
 // 	5. isLog2File 是否同步输出到 文件
 // 	6. fileLevel 输出到 文件 的级别，支持："DEBUG"，"INFO"，"NOTICE"，"WARNING"，"ERROR"，"CRITICAL"，如果为空则默认为 DEBUG
-// 	6. logDir 输出到 文件 的文件目录，如果为空则不能输出到文件
+// 	6. logDir 输出到 文件 的文件目录，如果为空则不能输出到文件。
+//			  此文件目录为当前工程的相对目录。
+//			  如果要指定绝对路径，请使用 'file://'开头，例如：file://usr/user/temp/log/
 //
 func InitLog(module, prefix, stdOutLevel, fileLevel, logDir string, isLog2Stdout, isLog2File bool) {
 	confModule = module
@@ -93,13 +95,17 @@ func registerFile(backends []oplogging.Backend) []oplogging.Backend {
 	}
 	fmt.Println("log directory:" + confLogDir)
 	tempDir := confLogDir
-	if ok, _ := utils.PathExists(tempDir); !ok {
-		// directory not exist
+	if strings.HasPrefix(tempDir, "file://") {
+		tempDir = tempDir[7:]
+	} else {
 		currentDir, _ := os.Getwd()
 		tempDir = currentDir + tempDir
 		if strings.HasPrefix(tempDir, string(os.PathSeparator)) && strings.HasSuffix(currentDir, string(os.PathSeparator)) {
 			tempDir = currentDir + tempDir[1:]
 		}
+	}
+	if ok, _ := utils.PathExists(tempDir); !ok {
+		// directory not exist
 		fmt.Println("create log directory:" + tempDir)
 		err := os.MkdirAll(tempDir, os.ModePerm)
 		if err != nil {
