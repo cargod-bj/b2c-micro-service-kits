@@ -14,6 +14,8 @@ import (
 
 import "github.com/cargod-bj/b2c-common/resp"
 
+var callDepth = log.CallDepth{Depth: 1}
+
 // 对Response对象做的扩展方法，便于数据处理
 type ResponseExtension interface {
 
@@ -48,7 +50,7 @@ func ParseData2Dto(x *common.Response, out interface{}) bool {
 	if err := utils.DecodeDto(data, out); err != nil {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info("解析数据错误", x, err)
+		log.Info("解析数据错误", callDepth, x, err)
 		return true
 	}
 
@@ -65,7 +67,7 @@ func ParseParams2Dto(x *common.Response, in, out interface{}) bool {
 	if err := utils.DecodeDto(data, out); err != nil {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info("解析数据错误", x, err)
+		log.Info("解析数据错误", callDepth, x, err)
 		return true
 	}
 	return false
@@ -75,7 +77,7 @@ func HoldError(x *common.Response, err error) bool {
 	if err != nil {
 		x.Code = resp.FAILED_UNKNOWN
 		x.Msg = resp.FAILED_UNKNOWN_MSG
-		log.Info("数据处理错误", err)
+		log.Info("数据处理错误", callDepth, err)
 		return true
 	}
 	return false
@@ -96,14 +98,14 @@ func Dto2Any(x *common.Response, src interface{}, target proto.Message) (result 
 	if err = commonUtils.DecodeDto(src, target); err != nil {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 		return
 	}
 	result, err = ptypes.MarshalAny(target)
 	if err != nil {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 	}
 	return
 }
@@ -115,7 +117,7 @@ func DtoList2AnyList(x *common.Response, src interface{}, target proto.Message) 
 	if srcType.Kind() != reflect.Slice {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 		return
 	}
 
@@ -134,14 +136,14 @@ func DtoList2AnyList(x *common.Response, src interface{}, target proto.Message) 
 		if err = commonUtils.DecodeDto(value, targetInstance); err != nil {
 			x.Code = resp.FAILED_DTO_DECODE
 			x.Msg = resp.FAILED_DTO_DECODE_MSG
-			log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+			log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 			return
 		}
 		itemAny, err := ptypes.MarshalAny(targetInstance.(proto.Message))
 		if err != nil {
 			x.Code = resp.FAILED_DTO_DECODE
 			x.Msg = resp.FAILED_DTO_DECODE_MSG
-			log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+			log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 		}
 		resultList = append(resultList, itemAny)
 	}
@@ -156,14 +158,14 @@ func BindDto2Data(x *common.Response, src interface{}, target proto.Message) {
 	if err := commonUtils.DecodeDto(src, target); err != nil {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 		return
 	}
 	result, err := ptypes.MarshalAny(target)
 	if err != nil {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 	}
 	x.Data = result
 	return
@@ -186,14 +188,14 @@ func BindDtoList2DataList(x *common.Response, src interface{}, target proto.Mess
 		if err != nil {
 			x.Code = resp.FAILED_DTO_DECODE
 			x.Msg = resp.FAILED_DTO_DECODE_MSG
-			log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+			log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 			return
 		}
 		x.Data = result
 	} else {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth)
 	}
 	return
 }
@@ -206,7 +208,7 @@ func BindDtoList2DataList(x *common.Response, src interface{}, target proto.Mess
 func BindMessageList(x *common.Response, list interface{}, pageList *common.PagedList) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+			log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 		}
 	}()
 	srcType := reflect.TypeOf(list)
@@ -228,7 +230,7 @@ func BindMessageList(x *common.Response, list interface{}, pageList *common.Page
 			if err != nil {
 				x.Code = resp.FAILED_DTO_DECODE
 				x.Msg = resp.FAILED_DTO_DECODE_MSG
-				log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+				log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 				return
 			}
 			anyList = append(anyList, itemAny)
@@ -238,14 +240,14 @@ func BindMessageList(x *common.Response, list interface{}, pageList *common.Page
 		if err != nil {
 			x.Code = resp.FAILED_DTO_DECODE
 			x.Msg = resp.FAILED_DTO_DECODE_MSG
-			log.Info(resp.FAILED_DTO_DECODE_MSG, err)
+			log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth, err)
 			return
 		}
 		x.Data = result
 	} else {
 		x.Code = resp.FAILED_DTO_DECODE
 		x.Msg = resp.FAILED_DTO_DECODE_MSG
-		log.Info(resp.FAILED_DTO_DECODE_MSG)
+		log.Info(resp.FAILED_DTO_DECODE_MSG, callDepth)
 	}
 	return
 }

@@ -20,6 +20,7 @@ var (
 	confFileLevel    string
 	confLogDir       string
 	confIsLog2File   bool
+	backendLeveled   oplogging.LeveledBackend
 	Logger           *oplogging.Logger
 	hasInit          bool = false
 )
@@ -65,7 +66,7 @@ func InitLog(module, prefix, stdOutLevel, fileLevel, logDir string, isLog2Stdout
 	backends = registerStdout(backends)
 	backends = registerFile(backends)
 
-	backendLeveled := oplogging.AddModuleLevel(oplogging.MultiLogger(backends...))
+	backendLeveled = AddModuleLevel(oplogging.MultiLogger(backends...))
 	Logger.SetBackend(backendLeveled)
 
 	hasInit = true
