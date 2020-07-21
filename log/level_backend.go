@@ -1,6 +1,9 @@
 package log
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"github.com/op/go-logging"
 	"sync"
 )
@@ -62,6 +65,17 @@ func (l *moduleLeveled) Log(level logging.Level, calldepth int, rec *logging.Rec
 					calldepth += d.Depth
 					target = i
 					break
+				} else if _, ok := rec.Args[i].(string); !ok {
+					if d, ok := rec.Args[i].(fmt.Stringer); ok {
+						rec.Args[i] = d.String()
+					} else {
+						marshal, err := json.Marshal(rec.Args[i])
+						if err == nil {
+							b := bytes.Buffer{}
+							b.Write(marshal)
+							rec.Args[i] = b.String()
+						}
+					}
 				}
 			}
 			// 如果有此对象，则将此对象从arg中删除
@@ -84,6 +98,7 @@ func (l *moduleLeveled) Log(level logging.Level, calldepth int, rec *logging.Rec
 	return
 }
 
+//
 //func (l *moduleLeveled) getFormatterAndCacheCurrent() logging.Formatter {
 //	l.once.Do(func() {
 //		if l.formatter == nil {
