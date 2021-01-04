@@ -7,6 +7,7 @@ import (
 )
 
 const defaultSuccess = "0000"
+const defaultUnknown = "9999"
 
 var rcMap = make(map[string]message)
 
@@ -41,6 +42,9 @@ func InitRC(allConfig map[string]interface{}, debug bool) {
 			}
 		}
 	}
+
+	rcMap[defaultSuccess] = message{langEn: "Success"}
+	rcMap[defaultUnknown] = message{langEn: "Unknown"}
 
 	for k := range allConfig {
 		msg := message{}
