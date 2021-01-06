@@ -42,8 +42,8 @@ func init() {
 	allSupportLocal.Add(LocalTh)
 	allSupportLocal.Add(LocalZh)
 
-	ss = setKits.SetStr()
-	allSupportLang = &ss
+	slang := setKits.SetStr()
+	allSupportLang = &slang
 
 	allSupportLang.Add(LangEn)
 	allSupportLang.Add(LangId)
