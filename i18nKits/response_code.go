@@ -8,6 +8,7 @@ import (
 
 const defaultSuccess = "0000"
 const defaultUnknown = "9999"
+const defaultUnknownMsg = "Failed unknown."
 
 var rcMap = make(map[string]message)
 
@@ -84,14 +85,14 @@ func GetRMByLang(code, lang string) string {
 		if isDebug {
 			panic("当前传入code为空")
 		}
-		return "Failed unknown."
+		return defaultUnknownMsg
 	}
 	item, ok := rcMap[code]
 	if !ok {
 		if isDebug {
 			panic(fmt.Sprintf("code(%s)不在注册code中，请检查是否错漏", code))
 		}
-		return "Failed unknown"
+		return defaultUnknownMsg
 	}
 
 	switch lang {

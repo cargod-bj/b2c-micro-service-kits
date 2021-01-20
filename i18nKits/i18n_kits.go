@@ -64,7 +64,10 @@ func I18nMicroHandler(opt *micro.Options) {
 				}()
 				err := originalHandler(ctx, req, rsp)
 				if t, ok := rsp.(*common.Response); ok {
-					t.Msg = GetRM(ctx, t.Code)
+					// 如果没有手动设置message，则使用code查找对应message
+					if t.Msg == "" {
+						t.Msg = GetRM(ctx, t.Code)
+					}
 				}
 				if err != nil && logErr != nil {
 					logErr("error:", err)
