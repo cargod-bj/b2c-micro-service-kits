@@ -54,9 +54,10 @@ func I18nMicroHandler(opt *micro.Options) {
 			return func(ctx context.Context, req server.Request, rsp interface{}) error {
 				defer func() {
 					if r := recover(); r != nil {
-						if logErr != nil {
-							logErr("error occur:", r)
-						}
+						//if logErr != nil {
+						//	logErr("error occur:", r)
+						//}
+						fmt.Printf("error occur: %v", r)
 						if t, ok := rsp.(*common.Response); ok {
 							t.Code = defaultUnknown
 						}
@@ -69,9 +70,12 @@ func I18nMicroHandler(opt *micro.Options) {
 						t.Msg = GetRM(ctx, t.Code)
 					}
 				}
-				if err != nil && logErr != nil {
-					logErr("error:", err)
+				if err != nil {
+					fmt.Printf("error: %v", err)
 				}
+				//if err != nil && logErr != nil {
+				//	logErr("error:", err)
+				//}
 				return err
 			}
 		})
